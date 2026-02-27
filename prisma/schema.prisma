@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password_hash String
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  transactions  Transaction[]
+  categories    Category[]
+  budgets       Budget[]
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  color     String   @default("#000000")
+  icon      String?
+  type      String   // INCOME or EXPENSE
+  user_id   String
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  transactions Transaction[]
+  budgets      Budget[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("categories")
+}
+
+model Transaction {
+  id             String   @id @default(uuid())
+  amount         Decimal
+  date           DateTime
+  description    String
+  type           String   // INCOME or EXPENSE
+  payment_method String?
+  notes          String?
+  
+  category_id    String
+  category       Category @relation(fields: [category_id], references: [id])
+  
+  user_id        String
+  user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("transactions")
+}
+
+model Budget {
+  id          String   @id @default(uuid())
+  amount      Decimal
+  month       Int
+  year        Int
+  
+  category_id String
+  category    Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  
+  user_id     String
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@unique([user_id, category_id, month, year])
+  @@map("budgets")
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  expires_at DateTime
+  revoked    Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
