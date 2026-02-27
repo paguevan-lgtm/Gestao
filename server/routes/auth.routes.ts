@@ -4,6 +4,8 @@ import { authenticateToken } from '../middlewares/auth.middleware';
 
 const router = Router();
 
+console.log('Loading auth routes...');
+
 router.post('/register', register);
 router.post('/login', login);
 router.post('/refresh-token', refreshToken);

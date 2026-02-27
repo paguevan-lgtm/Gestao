@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -43,6 +44,8 @@ async function startServer() {
   app.use('/api/categories', categoryRoutes);
   app.use('/api/transactions', transactionRoutes);
   app.use('/api/dashboard', dashboardRoutes);
+
+  console.log('Routes mounted: /api/auth, /api/categories, /api/transactions, /api/dashboard');
 
   // Error Handler (must be last)
   app.use(errorHandler);

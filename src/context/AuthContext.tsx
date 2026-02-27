@@ -44,7 +44,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(data.user);
       toast.success('Login realizado com sucesso!');
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Erro ao realizar login');
+      const errorMessage = error.response?.data?.error || 'Erro ao realizar login';
+      toast.error(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
       throw error;
     }
   };
@@ -55,7 +56,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(data.user);
       toast.success('Cadastro realizado com sucesso!');
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Erro ao realizar cadastro');
+      const errorMessage = error.response?.data?.error || 'Erro ao realizar cadastro';
+      toast.error(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
       throw error;
     }
   };
